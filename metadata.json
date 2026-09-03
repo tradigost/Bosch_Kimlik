@@ -1,0 +1,6 @@
+{
+  "name": "Corporate Headshot AI",
+  "description": "Transforms everyday photos into studio-grade corporate headshots using Gemini AI.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
