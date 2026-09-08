@@ -100,7 +100,8 @@ export function Uploader({ onImageSelected, selectedImage, onClear }: UploaderPr
     }
 
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const dataUrl = canvas.toDataURL("image/jpeg", 0.95);
+      // Apply heavy compression to avoid Vercel 4.5MB Serverless limit
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.6);
     stopCamera();
     onImageSelected(dataUrl);
   };
@@ -135,11 +136,36 @@ export function Uploader({ onImageSelected, selectedImage, onClear }: UploaderPr
       return;
     }
 
+    // Must compress uploaded file before sending to Vercel
     const reader = new FileReader();
     reader.onload = (e) => {
-      const result = e.target?.result as string;
-      stopCamera();
-      onImageSelected(result);
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        // Scale down to max 1024px to save payload size
+        const maxDim = 1024;
+        let width = img.width;
+        let height = img.height;
+        if (width > height && width > maxDim) {
+          height = Math.round((height * maxDim) / width);
+          width = maxDim;
+        } else if (height > maxDim) {
+          width = Math.round((width * maxDim) / height);
+          height = maxDim;
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          // Compress heavily for Vercel
+          const result = canvas.toDataURL('image/jpeg', 0.6);
+          stopCamera();
+          onImageSelected(result);
+        }
+      };
+      img.src = e.target?.result as string;
     };
     reader.readAsDataURL(file);
   };

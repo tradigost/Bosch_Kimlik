@@ -3,7 +3,6 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 
-// Initialize the Google Gen AI client with recommended headers
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
   httpOptions: {
@@ -17,7 +16,7 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
-  // Set higher limit for base64 image uploads
+  // Set higher limit for base64 image uploads in local dev
   app.use(express.json({ limit: "50mb" }));
 
   app.post("/api/generate-headshot", async (req, res) => {
@@ -40,7 +39,7 @@ async function startServer() {
         ? aspect_ratio
         : "3:4";
 
-      const hairInstruction = hairStyle === "preserve_long" 
+      const hairInstruction = hairStyle === "preserve_long"
         ? "CRITICAL: The subject has LONG HAIR in the photo. Do NOT cut it short! Strictly preserve their authentic long hair length, wave/curl pattern, volume, and color. Neatly arrange and style their long hair so it falls naturally and elegantly over the shoulders or chest without awkward flyaways."
         : hairStyle === "preserve_original"
         ? "CRITICAL: Keep the subject's exact hair length, natural texture, and hair volume identical to the source image. Only polish and groom unruly flyaway strands, do NOT alter the haircut or shorten the length."
@@ -95,8 +94,8 @@ ${userNotes}
         },
         config: {
           imageConfig: {
-            aspectRatio: selectedAspectRatio,
-            imageSize: "1K",
+            aspectRatio: selectedAspectRatio as any,
+            imageSize: "512px", // Fixed at 512px to match Vercel setup
           },
         },
       });
@@ -105,6 +104,7 @@ ${userNotes}
       let generatedMimeType = "image/jpeg";
 
       const candidate = response.candidates?.[0];
+
       if (candidate?.content?.parts) {
         for (const part of candidate.content.parts) {
           if (part.inlineData?.data) {
@@ -123,6 +123,7 @@ ${userNotes}
       }
 
       console.log("Headshot generation complete!");
+
       res.json({
         success: true,
         generatedImage: `data:${generatedMimeType};base64,${generatedImageData}`,
