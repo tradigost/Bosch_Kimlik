@@ -74,14 +74,48 @@ export default function App() {
     }
   };
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!generatedImage) return;
-    const a = document.createElement("a");
-    a.href = generatedImage;
-    a.download = "corporate-headshot.jpg";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+
+    try {
+      // 1. Convert base64 Data URL to Blob (safest for mobile Safari)
+      const response = await fetch(generatedImage);
+      const blob = await response.blob();
+      const file = new File([blob], "corporate-headshot.jpg", { type: "image/jpeg" });
+
+      // 2. Try using the native Web Share API (Best experience on iOS/Safari)
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: "Corporate Headshot",
+          });
+          return; // Success via share sheet
+        } catch (shareErr: any) {
+          // If user cancels share sheet, ignore error. Otherwise fall through to classic download.
+          if (shareErr.name !== "AbortError") {
+            console.error("Share failed:", shareErr);
+          } else {
+            return; 
+          }
+        }
+      }
+
+      // 3. Fallback to ObjectURL + Anchor Click (Standard desktop/Android method)
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = "corporate-headshot.jpg";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+    } catch (err) {
+      console.error("Download fallback failed:", err);
+      // 4. Absolute fallback for strict browsers
+      alert("İndirme otomatik olarak başlatılamadı. Lütfen resmin üzerine basılı tutup 'Fotoğraflara Kaydet' veya 'İndir' seçeneğine tıklayın.");
+    }
   };
 
   return (
