@@ -8,7 +8,7 @@ interface UploaderProps {
 }
 
 export function Uploader({ onImageSelected, selectedImage, onClear }: UploaderProps) {
-  const [activeTab, setActiveTab] = useState<"camera" | "upload">("camera");
+  const [activeTab, setActiveTab] = useState<"camera" | "upload">("upload");
   const [isDragging, setIsDragging] = useState(false);
   const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
   const [cameraActive, setCameraActive] = useState(false);
@@ -26,7 +26,7 @@ export function Uploader({ onImageSelected, selectedImage, onClear }: UploaderPr
     setCameraActive(false);
   }, []);
 
-  const startCamera = useCallback(async (facing: "user" | "environment") => {
+  const startCamera = useCallback(async (facing: "user" | "environment"): Promise<boolean> => {
     stopCamera();
     setCameraError(null);
 
@@ -50,27 +50,37 @@ export function Uploader({ onImageSelected, selectedImage, onClear }: UploaderPr
         videoRef.current.play().catch(() => {});
       }
       setCameraActive(true);
+      return true;
     } catch (err: any) {
       console.error("Camera access error:", err);
       let msg = "Kameraya erişilemedi. Lütfen kamera izni verin.";
-      if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+      if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError" || err.message?.includes("Permission denied")) {
         msg = "Kamera izni reddedildi. Lütfen tarayıcı ayarlarından izin verin.";
       } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
         msg = "Bağlı bir kamera bulunamadı.";
       }
       setCameraError(msg);
       setCameraActive(false);
+      return false;
     }
   }, [stopCamera]);
 
   // Handle switching tabs or unmounting
   useEffect(() => {
+    let isMounted = true;
+    
     if (activeTab === "camera" && !selectedImage) {
-      startCamera(facingMode);
+      startCamera(facingMode).then((success) => {
+        // If camera start fails (e.g., permission denied) on initial load, gracefully fallback to upload tab
+        if (isMounted && !success) {
+           setActiveTab("upload");
+        }
+      });
     } else {
       stopCamera();
     }
     return () => {
+      isMounted = false;
       stopCamera();
     };
   }, [activeTab, facingMode, selectedImage, startCamera, stopCamera]);

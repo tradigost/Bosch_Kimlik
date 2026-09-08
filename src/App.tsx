@@ -107,10 +107,10 @@ export default function App() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 flex overflow-hidden">
+      <main className="flex-1 flex flex-col md:flex-row overflow-auto md:overflow-hidden relative">
         
-        {/* Configuration Panel (Left Sidebar) */}
-        <aside className="w-80 lg:w-96 border-r border-white/10 bg-[#080808] p-6 flex flex-col gap-8 overflow-y-auto shrink-0">
+        {/* Configuration Panel (Left Sidebar / Top on Mobile) */}
+        <aside className="w-full md:w-80 lg:w-96 border-b md:border-b-0 md:border-r border-white/10 bg-[#080808] p-6 flex flex-col gap-8 md:overflow-y-auto shrink-0 md:h-full">
           <div>
             <h2 className="text-[10px] text-blue-500 font-bold uppercase tracking-widest mb-1">Configuration</h2>
             <p className="text-xs text-white/40">Upload a casual photo and define your professional style.</p>
@@ -232,7 +232,7 @@ export default function App() {
         </aside>
 
         {/* Preview Panel (Main Content Area) */}
-        <section className="flex-1 relative flex flex-col items-center justify-center bg-[radial-gradient(circle_at_center,_#1a1a1a_0%,_#050505_70%)] overflow-y-auto">
+        <section className="flex-1 relative flex flex-col items-center justify-center bg-[radial-gradient(circle_at_center,_#1a1a1a_0%,_#050505_70%)] md:overflow-y-auto">
           {/* Decorative Corner Borders */}
           <div className="absolute top-8 left-8 border-l border-t border-white/20 w-12 h-12 hidden md:block"></div>
           <div className="absolute top-8 right-8 border-r border-t border-white/20 w-12 h-12 hidden md:block"></div>
