@@ -1,1 +1,16 @@
 @import "tailwindcss";
+
+:root {
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #0c0d0e;
+  color: #ededed;
+}
+
+.font-mono-swiss {
+  font-family: var(--font-mono);
+}

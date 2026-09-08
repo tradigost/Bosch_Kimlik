@@ -32,7 +32,7 @@ export function Uploader({ onImageSelected, selectedImage, onClear }: UploaderPr
 
     try {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        throw new Error("Kamera bu tarayıcıda desteklenmiyor.");
+        throw new Error("Camera is not supported on this browser.");
       }
 
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -53,11 +53,11 @@ export function Uploader({ onImageSelected, selectedImage, onClear }: UploaderPr
       return true;
     } catch (err: any) {
       console.error("Camera access error:", err);
-      let msg = "Kameraya erişilemedi. Lütfen kamera izni verin.";
+      let msg = "Could not access camera. Please grant camera permissions.";
       if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError" || err.message?.includes("Permission denied")) {
-        msg = "Kamera izni reddedildi. Lütfen tarayıcı ayarlarından izin verin.";
+        msg = "Camera permission denied. Please allow access in browser settings.";
       } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
-        msg = "Bağlı bir kamera bulunamadı.";
+        msg = "No connected camera device was found.";
       }
       setCameraError(msg);
       setCameraActive(false);
@@ -142,7 +142,7 @@ export function Uploader({ onImageSelected, selectedImage, onClear }: UploaderPr
 
   const processFile = (file: File) => {
     if (!file.type.startsWith("image/")) {
-      alert("Lütfen geçerli bir görsel dosyası seçin.");
+      alert("Please select a valid image file.");
       return;
     }
 
@@ -198,16 +198,12 @@ export function Uploader({ onImageSelected, selectedImage, onClear }: UploaderPr
                 startCamera(facingMode);
               }
             }}
-            className="px-4 py-2 bg-red-500/20 text-red-400 rounded-full hover:bg-red-500/40 border border-red-500/50 transition-colors shadow-lg flex items-center gap-2 text-xs font-semibold tracking-wider uppercase"
-            title="Yeniden Çek / Kaldır"
+            className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-full border border-white/20 transition-colors shadow-lg flex items-center gap-2 text-xs font-medium"
+            title="Change photo"
           >
             <RotateCcw className="w-4 h-4" />
-            <span>Yeniden Çek</span>
+            <span>Change Photo</span>
           </button>
-        </div>
-        <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded text-[9px] text-green-400 font-mono flex items-center gap-1 border border-white/10">
-          <Check className="w-3 h-3" />
-          <span>KAYNAK HAZIR</span>
         </div>
       </div>
     );
@@ -216,18 +212,18 @@ export function Uploader({ onImageSelected, selectedImage, onClear }: UploaderPr
   return (
     <div className="flex flex-col gap-2 w-full">
       {/* Tab Selectors */}
-      <div className="grid grid-cols-2 p-1 bg-white/5 rounded border border-white/10 text-xs">
+      <div className="grid grid-cols-2 p-0.5 bg-white/5 rounded border border-white/10 text-xs">
         <button
           type="button"
           onClick={() => setActiveTab("camera")}
           className={`flex items-center justify-center gap-1.5 py-1.5 rounded text-[11px] font-medium transition-all ${
             activeTab === "camera"
-              ? "bg-blue-600 text-white shadow-sm font-semibold"
+              ? "bg-white text-black shadow-sm font-semibold"
               : "text-white/50 hover:text-white/80"
           }`}
         >
           <Camera className="w-3.5 h-3.5" />
-          <span>Kamera</span>
+          <span>Camera</span>
         </button>
         <button
           type="button"
@@ -237,12 +233,12 @@ export function Uploader({ onImageSelected, selectedImage, onClear }: UploaderPr
           }}
           className={`flex items-center justify-center gap-1.5 py-1.5 rounded text-[11px] font-medium transition-all ${
             activeTab === "upload"
-              ? "bg-blue-600 text-white shadow-sm font-semibold"
+              ? "bg-white text-black shadow-sm font-semibold"
               : "text-white/50 hover:text-white/80"
           }`}
         >
           <UploadCloud className="w-3.5 h-3.5" />
-          <span>Dosya Yükle</span>
+          <span>Upload File</span>
         </button>
       </div>
 
@@ -261,14 +257,14 @@ export function Uploader({ onImageSelected, selectedImage, onClear }: UploaderPr
                   onClick={() => startCamera(facingMode)}
                   className="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white text-[11px] rounded border border-white/10 transition-colors"
                 >
-                  Tekrar Dene
+                  Try Again
                 </button>
                 <button
                   type="button"
                   onClick={() => setActiveTab("upload")}
                   className="px-3 py-1.5 bg-blue-600 text-white text-[11px] rounded transition-colors"
                 >
-                  Dosya Yükle
+                  Upload File
                 </button>
               </div>
             </div>
@@ -291,7 +287,7 @@ export function Uploader({ onImageSelected, selectedImage, onClear }: UploaderPr
                   <div className="w-2 h-2 rounded-full bg-blue-400/40 animate-pulse"></div>
                 </div>
                 <div className="absolute top-3 text-[9px] font-mono uppercase tracking-widest text-white/60 bg-black/50 px-2 py-0.5 rounded backdrop-blur-sm border border-white/10">
-                  Yüzünüzü çemberin içine hizalayın
+                  Align face within center oval
                 </div>
               </div>
 
@@ -302,7 +298,7 @@ export function Uploader({ onImageSelected, selectedImage, onClear }: UploaderPr
                   type="button"
                   onClick={toggleCameraFacing}
                   className="p-2.5 rounded-full bg-black/60 hover:bg-black/80 text-white/80 hover:text-white border border-white/15 backdrop-blur-md transition-all shadow-lg active:scale-95"
-                  title={facingMode === "user" ? "Arka Kameraya Geç" : "Ön Kameraya Geç"}
+                  title={facingMode === "user" ? "Switch to Back Camera" : "Switch to Front Camera"}
                 >
                   <SwitchCamera className="w-4 h-4" />
                 </button>
@@ -312,7 +308,7 @@ export function Uploader({ onImageSelected, selectedImage, onClear }: UploaderPr
                   type="button"
                   onClick={capturePhoto}
                   className="relative p-1 rounded-full border-2 border-white/80 hover:border-white transition-all group active:scale-95 shadow-xl"
-                  title="Fotoğraf Çek"
+                  title="Capture Photo"
                 >
                   <div className="w-11 h-11 rounded-full bg-white group-hover:bg-blue-400 transition-colors flex items-center justify-center">
                     <Camera className="w-5 h-5 text-black group-hover:scale-110 transition-transform" />
@@ -321,7 +317,7 @@ export function Uploader({ onImageSelected, selectedImage, onClear }: UploaderPr
 
                 {/* Facing Mode Badge */}
                 <span className="text-[9px] font-mono text-white/50 bg-black/60 border border-white/10 px-2 py-1 rounded backdrop-blur-md uppercase">
-                  {facingMode === "user" ? "Ön Kamera" : "Arka Kamera"}
+                  {facingMode === "user" ? "Front Camera" : "Rear Camera"}
                 </span>
               </div>
             </>
@@ -353,10 +349,10 @@ export function Uploader({ onImageSelected, selectedImage, onClear }: UploaderPr
             <UploadCloud className="w-5 h-5 text-white/50 group-hover:text-white/80 transition-colors" />
           </div>
           <h3 className="text-[11px] text-white/60 uppercase tracking-widest text-center">
-            Fotoğraf Seç veya Sürükle
+            Select or Drop Photo
           </h3>
           <p className="text-[9px] text-white/30 text-center mt-1">
-            JPG, PNG veya WEBP formatı
+            JPG, PNG or WEBP format
           </p>
           <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
         </div>

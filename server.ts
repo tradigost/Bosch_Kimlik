@@ -27,7 +27,7 @@ async function startServer() {
         return res.status(400).json({ error: "No image provided" });
       }
 
-      console.log("Processing image for enhanced natural corporate headshot generation...");
+      console.log("Processing image for 2K ultra-high-resolution natural corporate headshot generation...");
 
       // Extract raw base64 data and mimeType
       const base64Data = imageBase64.split(",")[1];
@@ -43,6 +43,10 @@ async function startServer() {
         ? "CRITICAL: The subject has LONG HAIR in the photo. Do NOT cut it short! Strictly preserve their authentic long hair length, wave/curl pattern, volume, and color. Neatly arrange and style their long hair so it falls naturally and elegantly over the shoulders or chest without awkward flyaways."
         : hairStyle === "preserve_original"
         ? "CRITICAL: Keep the subject's exact hair length, natural texture, and hair volume identical to the source image. Only polish and groom unruly flyaway strands, do NOT alter the haircut or shorten the length."
+        : hairStyle === "natural_groomed"
+        ? "Keep the subject's authentic hair length and color from the photo. Tidy up messy strands while keeping the natural hair length intact."
+        : (hairStyle && hairStyle.trim())
+        ? `CRITICAL HAIR SPECIFICATION: ${hairStyle.trim()}`
         : "Keep the subject's authentic hair length and color from the photo. Tidy up messy strands while keeping the natural hair length intact.";
 
       const userNotes = customNotes && customNotes.trim()
@@ -50,11 +54,11 @@ async function startServer() {
         : "";
 
       const promptText = `
-You are a world-class portrait photographer shooting real people for authentic corporate profiles.
-Your task is to take the REAL person from the input image and photograph them in high-end corporate studio attire.
+You are a master portrait photographer shooting real executives for premier editorial publications.
+Your task is to take the REAL person from the input photo and photograph them in ultra-sharp 2K high-fidelity corporate studio portraiture.
 
 ### ABSOLUTE RULES AGAINST AI UNCANNY VALLEY / ARTIFICIAL LOOK:
-1. PRESERVE THE REAL PERSON (REAL HUMAN TEXTURE):
+1. PRESERVE THE REAL PERSON (MAXIMUM AUTHENTIC HUMAN TEXTURE):
    - You MUST keep this exact person's real face, authentic features, eye shape, nose structure, smile lines, and skin tone.
    - Absolutely NO plastic airbrushing, NO fake synthetic CGI look, NO generic AI face swap.
    - Retain realistic human skin texture, pores, fine details, and natural organic lighting.
@@ -95,7 +99,7 @@ ${userNotes}
         config: {
           imageConfig: {
             aspectRatio: selectedAspectRatio as any,
-            imageSize: "512px", // Fixed at 512px to match Vercel setup
+            imageSize: "2K",
           },
         },
       });
