@@ -4,8 +4,6 @@ import { Check, Edit3 } from "lucide-react";
 export interface PresetSelection {
   attire: string;
   isCustomAttire: boolean;
-  background: string;
-  isCustomBackground: boolean;
   hairStyle: string;
   isCustomHair: boolean;
   aspectRatio: string;
@@ -50,39 +48,6 @@ export const ATTIRE_PRESETS = [
   },
 ];
 
-export const BACKGROUND_PRESETS = [
-  {
-    id: "studio_gray",
-    label: "Studio Gray",
-    description: "Neutral studio backdrop with balanced soft lighting",
-    fullPrompt: "Seamless Studio Gray (Corporate Standard)",
-  },
-  {
-    id: "warm_canvas",
-    label: "Warm Canvas",
-    description: "Soft tactile textured canvas with natural warm tones",
-    fullPrompt: "Warm Neutral Studio Canvas (Soft & Approachable)",
-  },
-  {
-    id: "glass_office",
-    label: "Modern Office",
-    description: "Contemporary glass and steel interior with soft bokeh",
-    fullPrompt: "Modern Glass Office with Subtle Bokeh (Depth & Premium)",
-  },
-  {
-    id: "pure_white",
-    label: "Pure White",
-    description: "Crisp white studio background with clean separation",
-    fullPrompt: "Pure White (ID/Passport Style)",
-  },
-  {
-    id: "matte_anthracite",
-    label: "Anthracite",
-    description: "Subtle textured dark backdrop with gentle rim light",
-    fullPrompt: "Matte Anthracite Concrete Texture with Subtle Rim Light",
-  },
-];
-
 export const HAIR_PRESETS = [
   {
     id: "preserve_original",
@@ -117,14 +82,6 @@ const ATTIRE_SUGGESTIONS = [
   "Tailored beige trench coat",
   "Silk blouse with mandarin collar",
   "Anthracite double-breasted suit",
-];
-
-const ENV_SUGGESTIONS = [
-  "Minimalist loft with diffused daylight",
-  "Teakwood bookshelf with soft ambient glow",
-  "Soft slate blue studio gradient",
-  "Architectural concrete gallery wall",
-  "Airy Scandinavian interior",
 ];
 
 const HAIR_SUGGESTIONS = [
@@ -246,121 +203,6 @@ export function SwissPresets({ selection, onChange }: SwissPresetsProps) {
               </div>
               <span className="text-[10px] text-white/40 mt-1">
                 Type any custom clothing or fabric
-              </span>
-            </button>
-          </div>
-        )}
-      </section>
-
-      {/* 02: BACKGROUND */}
-      <section className="space-y-2.5">
-        <div className="flex items-center justify-between pb-1 border-b border-white/10">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-white">
-            Background
-          </h3>
-
-          <div className="flex items-center gap-1 bg-white/5 p-0.5 rounded">
-            <button
-              type="button"
-              onClick={() => onChange({ isCustomBackground: false })}
-              className={`px-2 py-0.5 text-[10px] uppercase font-medium rounded transition-colors ${
-                !selection.isCustomBackground
-                  ? "bg-white text-black font-semibold"
-                  : "text-white/60 hover:text-white"
-              }`}
-            >
-              Presets
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                onChange({ isCustomBackground: true });
-                if (!selection.background) {
-                  onChange({ background: ENV_SUGGESTIONS[0] });
-                }
-              }}
-              className={`px-2 py-0.5 text-[10px] uppercase font-medium rounded flex items-center gap-1 transition-colors ${
-                selection.isCustomBackground
-                  ? "bg-white text-black font-semibold"
-                  : "text-white/60 hover:text-white"
-              }`}
-            >
-              <Edit3 className="w-2.5 h-2.5" />
-              Custom
-            </button>
-          </div>
-        </div>
-
-        {selection.isCustomBackground ? (
-          <div className="space-y-2">
-            <textarea
-              rows={2}
-              value={selection.background}
-              onChange={(e) => onChange({ background: e.target.value })}
-              placeholder="Describe background (e.g. Modern glass office with soft natural lighting)..."
-              className="w-full bg-[#111317] border border-white/15 text-white text-xs p-2.5 rounded outline-none focus:border-white/50 placeholder:text-white/25 transition-all resize-none"
-            />
-            <div className="flex flex-wrap gap-1.5">
-              {ENV_SUGGESTIONS.map((sug, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => onChange({ background: sug })}
-                  className="text-[10px] px-2 py-0.5 bg-white/5 hover:bg-white/10 text-white/70 hover:text-white border border-white/10 rounded transition-colors"
-                >
-                  + {sug}
-                </button>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {BACKGROUND_PRESETS.map((preset) => {
-              const isSelected = selection.background === preset.fullPrompt && !selection.isCustomBackground;
-              return (
-                <button
-                  key={preset.id}
-                  type="button"
-                  onClick={() => onChange({ background: preset.fullPrompt, isCustomBackground: false })}
-                  className={`text-left p-2.5 rounded border transition-all flex flex-col justify-between ${
-                    isSelected
-                      ? "bg-white text-black border-white shadow-sm"
-                      : "bg-[#111317] text-white border-white/10 hover:border-white/25"
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold tracking-tight">
-                      {preset.label}
-                    </span>
-                    {isSelected && <Check className="w-3 h-3 text-black stroke-[2.5]" />}
-                  </div>
-                  <span
-                    className={`text-[10px] leading-relaxed mt-1 line-clamp-2 ${
-                      isSelected ? "text-black/70" : "text-white/45"
-                    }`}
-                  >
-                    {preset.description}
-                  </span>
-                </button>
-              );
-            })}
-
-            <button
-              type="button"
-              onClick={() => {
-                onChange({ isCustomBackground: true });
-                if (!selection.background) {
-                  onChange({ background: ENV_SUGGESTIONS[0] });
-                }
-              }}
-              className="p-2.5 rounded border border-dashed border-white/20 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/40 text-left flex flex-col justify-center transition-all"
-            >
-              <div className="flex items-center gap-1.5 text-xs font-medium text-white/80">
-                <Edit3 className="w-3 h-3" />
-                <span>Custom Background</span>
-              </div>
-              <span className="text-[10px] text-white/40 mt-1">
-                Type any lighting or interior style
               </span>
             </button>
           </div>

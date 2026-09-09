@@ -5,7 +5,7 @@
 
 import { useState } from "react";
 import { Uploader } from "./components/Uploader";
-import { SwissPresets, PresetSelection, ATTIRE_PRESETS, BACKGROUND_PRESETS } from "./components/SwissPresets";
+import { SwissPresets, PresetSelection, ATTIRE_PRESETS } from "./components/SwissPresets";
 import { Loader2, Camera, Download, AlertTriangle, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -15,8 +15,6 @@ export default function App() {
   const [presetSelection, setPresetSelection] = useState<PresetSelection>({
     attire: ATTIRE_PRESETS[0].fullPrompt,
     isCustomAttire: false,
-    background: BACKGROUND_PRESETS[0].fullPrompt,
-    isCustomBackground: false,
     hairStyle: "preserve_original",
     isCustomHair: false,
     aspectRatio: "3:4",
@@ -44,7 +42,6 @@ export default function App() {
         body: JSON.stringify({
           imageBase64: selectedImage,
           attire: presetSelection.attire,
-          background: presetSelection.background,
           aspect_ratio: presetSelection.aspectRatio,
           hairStyle: presetSelection.hairStyle,
           customNotes: presetSelection.customNotes,

@@ -21,7 +21,8 @@ async function startServer() {
 
   app.post("/api/generate-headshot", async (req, res) => {
     try {
-      const { imageBase64, attire, background, aspect_ratio, hairStyle, customNotes } = req.body;
+      const { imageBase64, attire, aspect_ratio, hairStyle, customNotes } = req.body;
+      const background = "Seamless Studio Gray (Corporate Standard)";
 
       if (!imageBase64) {
         return res.status(400).json({ error: "No image provided" });
